@@ -1,29 +1,33 @@
 function sumOfDivided(lst) {
-    let maxNum = Math.max(...lst);
-    console.log(maxNum)
-    let ans = [];
-    for (let i = 2; i <= maxNum; i++){
-        let numberToAdd = 0;
-        for (let j = 0; j < lst.length; j++){
-            if (isPrime(i) && lst[j] % i == 0){
-                numberToAdd += lst[j];
+    if (lst.length === 0) return [];
+    
+    let primeFactors = new Map();
+    
+    for (let num of lst) {
+        let absNum = Math.abs(num);
+        let factor = 2;
+        
+        while (factor * factor <= absNum) {
+            if (absNum % factor === 0) {
+                if (!primeFactors.has(factor)) {
+                    primeFactors.set(factor, 0);
+                }
+                primeFactors.set(factor, primeFactors.get(factor) + num);
+                while (absNum % factor === 0) {
+                    absNum /= factor;
+                }
             }
+            factor++;
         }
-        if(isPrime(i)){
-            ans.push([i, numberToAdd]);
+        
+        if (absNum > 1) {
+            if (!primeFactors.has(absNum)) {
+                primeFactors.set(absNum, 0);
+            }
+            primeFactors.set(absNum, primeFactors.get(absNum) + num);
         }
     }
-    return ans;
+    
+    return Array.from(primeFactors)
+                .sort((a, b) => a[0] - b[0]);
 }
-
-function isPrime(num) { 
-    for (let i = 2; i <= Math.sqrt(num); i++) { 
-        if (num % i === 0) { 
-            return false; 
-        } 
-    } 
-    return num > 1; 
-} 
-
-console.log(sumOfDivided([12, 15]))
-
